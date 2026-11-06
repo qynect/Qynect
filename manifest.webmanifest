@@ -1,0 +1,25 @@
+{
+  "name": "Qynect Student Pass",
+  "short_name": "Qynect",
+  "description": "Live student attendance QR pass for iPhone and iPad.",
+  "start_url": "ios.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "static/qynect-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "static/qynect-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

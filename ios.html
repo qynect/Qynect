@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Qynect live student QR pass for iPhone and iPad.">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Qynect">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="static/qynect-icon-180.png">
+    <title>Qynect Web Pass</title>
+    <script src="static/tailwind.js"></script>
+    <style>
+        html { -webkit-text-size-adjust: 100%; }
+        body {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        [hidden] { display: none !important; }
+        #qr-code svg { display: block; width: 100%; height: auto; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-950 antialiased">
+    <div class="mx-auto flex min-h-screen max-w-lg flex-col">
+        <header class="flex items-center justify-between gap-3 px-5 pt-5">
+            <a href="index.html" class="flex items-center gap-3">
+                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-lg font-black text-white">Q</span>
+                <span>
+                    <span class="block text-lg font-black leading-5 tracking-tight">Qynect</span>
+                    <span class="block text-[10px] font-bold uppercase tracking-widest text-slate-500">Web Pass</span>
+                </span>
+            </a>
+            <span class="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-600">iPhone &amp; iPad</span>
+        </header>
+
+        <main class="flex-1 px-5 pb-10 pt-7">
+            <section id="register-view" hidden>
+                <div class="flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">No install needed</p>
+                </div>
+                <h1 class="mt-3 text-4xl font-black leading-[1.05] tracking-tight">Your student pass, in Safari.</h1>
+                <p class="mt-3 text-sm leading-6 text-slate-600">Register once and show the same live QR pass used by the Qynect Android app. Your details stay in this browser.</p>
+
+                <form id="register-form" class="mt-7 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-900/5 sm:p-6" novalidate>
+                    <div class="flex items-start gap-3">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-950 text-sm font-black text-white">Q</span>
+                        <div>
+                            <h2 id="form-title" class="text-xl font-black tracking-tight">Create your web pass</h2>
+                            <p id="form-copy" class="mt-1 text-xs leading-5 text-slate-500">Register once on this iPhone or iPad. Your pass is saved in this browser.</p>
+                        </div>
+                    </div>
+
+                    <div id="form-error" hidden class="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold leading-5 text-red-700" role="alert"></div>
+
+                    <div class="mt-6 space-y-4">
+                        <div>
+                            <label for="school-id" class="block text-[10px] font-black uppercase tracking-widest text-slate-500">School ID</label>
+                            <input id="school-id" name="school-id" type="text" inputmode="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="32" required class="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-base font-semibold outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-950 focus:ring-2 focus:ring-slate-950/10" placeholder="e.g. 2026-00123">
+                        </div>
+                        <div>
+                            <label for="full-name" class="block text-[10px] font-black uppercase tracking-widest text-slate-500">Full name</label>
+                            <input id="full-name" name="full-name" type="text" autocomplete="name" maxlength="120" required class="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-base font-semibold outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-950 focus:ring-2 focus:ring-slate-950/10" placeholder="Your full name">
+                        </div>
+                        <div>
+                            <label for="section" class="block text-[10px] font-black uppercase tracking-widest text-slate-500">Section</label>
+                            <select id="section" name="section" required class="mt-1.5 w-full appearance-none rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-base font-semibold outline-none focus:border-slate-950 focus:ring-2 focus:ring-slate-950/10">
+                            </select>
+                        </div>
+                        <div>
+                            <label for="grade" class="block text-[10px] font-black uppercase tracking-widest text-slate-500">Grade</label>
+                            <input id="grade" name="grade" type="text" readonly tabindex="-1" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base font-semibold text-slate-600 outline-none" placeholder="Set automatically from your section">
+                        </div>
+                    </div>
+
+                    <button id="submit-button" type="submit" class="mt-6 flex w-full items-center justify-center rounded-xl bg-slate-950 px-5 py-3.5 text-sm font-black text-white shadow-lg shadow-slate-950/10 transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70">Create my pass</button>
+                    <button id="cancel-edit" type="button" hidden class="mt-2 w-full rounded-xl px-4 py-3 text-sm font-bold text-slate-500 transition hover:bg-slate-50 hover:text-slate-950">Cancel</button>
+                </form>
+
+                <div class="mt-5 rounded-[2rem] bg-slate-950 p-5 text-white shadow-xl shadow-slate-900/10 sm:p-6">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">How it works</p>
+                    <div class="mt-4 space-y-4 text-sm leading-6 text-slate-200">
+                        <div class="flex gap-3">
+                            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-xs font-black text-slate-950">1</span>
+                            <p>Enter your school ID, full name, and section.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-xs font-black text-slate-950">2</span>
+                            <p>Qynect creates a live QR pass that refreshes every 10 seconds.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-xs font-black text-slate-950">3</span>
+                            <p>Show the screen to the attendance scanner at school.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="mt-4 px-1 text-xs leading-5 text-slate-500">This web pass is stored only in this browser. The school does not receive your details from this page. Keep your iPhone date and time set to automatic.</p>
+                <a href="index.html" class="mt-4 flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-slate-950 hover:text-slate-950">Using Android instead? Download the app</a>
+            </section>
+
+            <section id="pass-view" hidden>
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">Live attendance pass</p>
+                        <h1 class="mt-1 text-3xl font-black tracking-tight">Ready to scan</h1>
+                    </div>
+                    <button id="edit-top" type="button" class="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-black text-slate-700 transition hover:border-slate-950 hover:text-slate-950">Edit</button>
+                </div>
+
+                <div id="secure-warning" hidden class="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm leading-6 text-red-800">
+                    <p class="font-black">A secure connection is required.</p>
+                    <p class="mt-1">Open this page using the school's HTTPS Qynect link. iPhone Safari cannot create the live QR over plain HTTP.</p>
+                </div>
+                <div id="pass-error" hidden class="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold leading-6 text-red-700" role="alert"></div>
+
+                <section class="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-900/5">
+                    <div class="flex items-center gap-3">
+                        <div id="profile-initial" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-950 text-lg font-black text-white">Q</div>
+                        <div class="min-w-0 flex-1">
+                            <p id="profile-name" class="truncate text-lg font-black tracking-tight"></p>
+                            <p id="profile-id" class="mt-0.5 truncate text-xs font-semibold text-slate-500"></p>
+                            <p id="profile-grade-section" class="mt-0.5 truncate text-xs font-semibold text-slate-500"></p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex gap-2">
+                        <button id="edit-details" type="button" class="flex-1 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-black text-slate-700 transition hover:border-slate-950 hover:text-slate-950">Edit details</button>
+                        <button id="forget-device" type="button" class="flex-1 rounded-xl px-4 py-2.5 text-xs font-black text-slate-500 transition hover:bg-slate-50 hover:text-slate-950">Forget device</button>
+                    </div>
+                </section>
+
+                <section class="mt-5 rounded-[2rem] border border-slate-200 bg-white p-4 shadow-2xl shadow-slate-900/10 sm:p-5">
+                    <div class="flex items-center justify-between gap-3 rounded-2xl bg-slate-950 px-4 py-3 text-white">
+                        <span class="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-200">
+                            <span id="qr-dot" class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                            Live QR
+                        </span>
+                        <span id="qr-countdown" class="text-xs font-black text-emerald-400">Refreshes in 10s</span>
+                    </div>
+                    <div class="mt-4 rounded-2xl border-2 border-slate-200 bg-white p-4">
+                        <div id="qr-code" class="mx-auto w-full max-w-[300px]" role="img" aria-label="Live QR pass"></div>
+                    </div>
+                    <div class="mt-4 h-2 overflow-hidden rounded-full bg-slate-200">
+                        <div id="qr-progress" class="h-full rounded-full" style="width:100%;background:#16a34a"></div>
+                    </div>
+                    <p class="mt-4 text-center text-xs leading-5 text-slate-500">Show this screen to the attendance scanner. The QR changes every 10 seconds, so old screenshots expire.</p>
+                    <p class="mt-1 text-center text-[11px] leading-5 text-slate-400">Keep your iPhone date and time set to automatic.</p>
+                </section>
+
+                <div id="install-tip" class="mt-5 rounded-2xl border border-sky-200 bg-sky-50 p-4">
+                    <p class="text-sm font-black text-sky-950">Add Qynect to your Home Screen</p>
+                    <p class="mt-1 text-xs leading-5 text-sky-800">In Safari, tap the Share button, then <strong>Add to Home Screen</strong>. Qynect will open like an app.</p>
+                </div>
+
+                <p class="mt-6 text-center text-[11px] font-semibold text-slate-400">Qynect Web Pass &middot; Android app 1.2.1</p>
+            </section>
+        </main>
+    </div>
+
+    <noscript>
+        <div class="mx-5 mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">JavaScript is required to create the live QR pass.</div>
+    </noscript>
+
+    <script>
+        window.QYNECT_WEB_CONFIG = {
+            secret: "SCHOOL_ATTENDANCE_SECRET_KEY",
+            sections: ["11-Altruism", "11-Dexterity", "11-Diligence", "11-Fortitude", "11-Innovation", "11-Integrity", "11-Prudence", "11-Resilience", "12-Bernardos", "12-Disney", "12-Drucker", "12-Einstein", "12-Musk", "12-Richards", "12-Van Gogh"],
+            appVersion: "1.2.1"
+        };
+    </script>
+    <script src="static/pass-core.js?v=1"></script>
+    <script src="static/qrcode.js?v=1"></script>
+    <script src="static/web-pass.js?v=1"></script>
+</body>
+</html>
