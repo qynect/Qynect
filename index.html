@@ -138,6 +138,11 @@
         <p>Android downloads hosted on GitHub</p>
     </footer>
 
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js");
+        }
+    </script>
     
     <script>
         (function () {
