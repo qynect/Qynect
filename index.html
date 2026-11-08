@@ -32,7 +32,7 @@
 
                 <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                     
-                    <a href="#" data-github-release class="inline-flex items-center justify-center rounded-xl bg-slate-950 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-slate-950/10 hover:bg-slate-800">
+                    <a href="#" data-github-release data-github-asset="Qynect-1.2.1-release.apk" class="inline-flex items-center justify-center rounded-xl bg-slate-950 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-slate-950/10 hover:bg-slate-800">
                         Download the Official Qynect App
                     </a>
                     
@@ -47,7 +47,7 @@
                 </p>
                 <p class="mt-1 text-xs font-medium text-slate-500">iPhone/iPad web pass: no install needed</p>
                 
-                <p class="mt-2 text-xs font-medium text-slate-500">Android download opens the latest GitHub Release.</p>
+                <p class="mt-2 text-xs font-medium text-slate-500">Android download starts automatically.</p>
                 
                 
                 <p class="mt-5 max-w-xl rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900">
@@ -135,7 +135,7 @@
 
     <footer class="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-8 text-xs font-medium text-slate-500 sm:flex-row sm:items-center sm:justify-between">
         <p>Qynect Student Attendance</p>
-        <p>Android downloads hosted on GitHub</p>
+        <p>Android downloads directly from the official GitHub release</p>
     </footer>
 
     <script>
@@ -148,13 +148,17 @@
         (function () {
             var link = document.querySelector("[data-github-release]");
             if (!link) return;
+            var asset = link.dataset.githubAsset;
+            if (!asset) return;
             var suffix = ".github.io";
             var host = window.location.hostname;
             if (host.slice(-suffix.length) !== suffix) return;
             var user = host.slice(0, -suffix.length);
             var parts = window.location.pathname.split("/").filter(Boolean);
             var repo = parts.length ? parts[0] : user + suffix;
-            link.href = "https://github.com/" + user + "/" + repo + "/releases/latest";
+            link.href = "https://github.com/" + user + "/" + repo +
+                "/releases/latest/download/" + encodeURIComponent(asset);
+            link.setAttribute("download", asset);
         })();
     </script>
     
